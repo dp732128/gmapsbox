@@ -20,8 +20,28 @@
     
 var map = L.map('map').setView([54.805, -2.96], 5);
 L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
-    attribution: 'Jack Lambourne - jlambourne94@outlook.com &copy; <a href="https://www.openstreetmap.org/copyright">Google twatmaps</a> contributors'
+    attribution: 'TOEX Coding Club'
 }).addTo(map);
+    
+     var drawnItems = new L.FeatureGroup();
+     map.addLayer(drawnItems);
+     var drawControl = new L.Control.Draw({
+         edit: {
+             featureGroup: drawnItems
+         }
+     });
+     map.addControl(drawControl);
+    
+    
+         var modifiedDraw = L.drawLocal.extend({
+         draw: {
+             toolbar: {
+                 buttons: {
+                     polygon: 'Draw an awesome polygon'
+                 }
+             }
+         }
+     });
     
   </script>
     

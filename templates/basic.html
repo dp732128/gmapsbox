@@ -138,5 +138,22 @@ document.getElementById('se').value = document.getElementById('se').value.split(
 
 
 <div style="position: absolute; top: 35%; right: 0.7%; width: 30%"><button style="width:70%; height: 10%;" onclick="submit_coords()">Submit Coordinates</button></div>
+
+
+<script>
+function submit_coords() {
+ var myreq= new XMLHttpRequest();
+
+    myreq.open("GET", "/getcoords?coords=" + document.getElementById("ne").value + "," + document.getElementById("nw").value + "," + document.getElementById("sw").value + "," + document.getElementById("se").value, false);
+    
+    myreq.send();
+
+alert(myreq.responseText);
+   
+    
+}
+    
+</script>
+    
 </body>
 </html>

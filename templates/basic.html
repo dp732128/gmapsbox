@@ -50,7 +50,7 @@
     <script src="{{ url_for('static', filename='src/edit/handler/EditToolbar.Delete.js') }}"></script>
 </head>
 <body>
-<div id="map" style="width: 60%; height: 500px; border: 1px solid #ccc"></div>
+<div id="map" style="width: 60%; height: 100%; border: 1px solid #ccc"></div>
 
 <script>
     var osmUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
@@ -129,14 +129,14 @@ document.getElementById('se').value = document.getElementById('se').value.split(
 </script>
 
 
-<input style="position: absolute; top: 5%; right: 5%; width: 30%" value="Please enter business type to search for">    
+<input style="position: absolute; top: 3%; right: 5%; width: 30%" value="Please enter business type to search for">    
     
-<div style="position: absolute; top: 15%; right: 5%; width: 30%">NW point: <input id="nw" style = "width: 30%; height: 10%;">   NE point: <input id="ne" style = "width: 30%; height: 10%;"></div>
+<div style="position: absolute; top: 18%; right: 5%; width: 30%">NW point: <input id="nw" style = "width: 30%; height: 10%;">   NE point: <input id="ne" style = "width: 30%; height: 10%;"></div>
 
 
-<div style="position: absolute; top: 25%; right: 5%; width: 30%">SW point: <input id="sw" style = "width: 30%; height: 10%;">   SE point: <input id="se" style = "width: 30%; height: 10%;"></div>
+<div style="position: absolute; top: 28%; right: 5%; width: 30%">SW point: <input id="sw" style = "width: 30%; height: 10%;">   SE point: <input id="se" style = "width: 30%; height: 10%;"></div>
 
 
-<div style="position: absolute; top: 35%; right: 1%; width: 30%"><button style="width:70%; height: 10%;" onclick="submit_coords()">Submit Coordinates</button></div>
+<div style="position: absolute; top: 38%; right: 1%; width: 30%"><button style="width:70%; height: 10%;" onclick="submit_coords()">Submit Coordinates</button></div>
 </body>
 </html>

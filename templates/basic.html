@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaflet.draw drawing and editing tools</title>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="libs/leaflet.css"/>
+    <link rel="stylesheet" href="src/leaflet.draw.css"/>
+
+    <script src="libs/leaflet-src.js"></script>
+
+    <script src="src/Leaflet.draw.js"></script>
+    <script src="src/Leaflet.Draw.Event.js"></script>
+
+    <script src="src/edit/handler/Edit.Poly.js"></script>
+    <script src="src/edit/handler/Edit.SimpleShape.js"></script>
+    <script src="src/edit/handler/Edit.Rectangle.js"></script>
+    <script src="src/edit/handler/Edit.Marker.js"></script>
+  	<script src="src/edit/handler/Edit.CircleMarker.js"></script>
+  	<script src="src/edit/handler/Edit.Circle.js"></script>
+
+    <script src="src/draw/handler/Draw.Feature.js"></script>
+    <script src="src/draw/handler/Draw.Polyline.js"></script>
+    <script src="src/draw/handler/Draw.Polygon.js"></script>
+    <script src="src/draw/handler/Draw.SimpleShape.js"></script>
+    <script src="src/draw/handler/Draw.Rectangle.js"></script>
+    <script src="src/draw/handler/Draw.Circle.js"></script>
+    <script src="src/draw/handler/Draw.Marker.js"></script>
+    <script src="src/draw/handler/Draw.CircleMarker.js"></script>
+
+    <script src="src/ext/TouchEvents.js"></script>
+    <script src="src/ext/LatLngUtil.js"></script>
+    <script src="src/ext/GeometryUtil.js"></script>
+    <script src="src/ext/LineUtil.Intersect.js"></script>
+    <script src="src/ext/Polyline.Intersect.js"></script>
+    <script src="src/ext/Polygon.Intersect.js"></script>
+
+    <script src="src/Control.Draw.js"></script>
+    <script src="src/Tooltip.js"></script>
+    <script src="src/Toolbar.js"></script>
+
+    <script src="src/draw/DrawToolbar.js"></script>
+    <script src="src/edit/EditToolbar.js"></script>
+    <script src="src/edit/handler/EditToolbar.Edit.js"></script>
+    <script src="src/edit/handler/EditToolbar.Delete.js"></script>
+</head>
+<body>
+<div id="map" style="width: 60%; height:700px; border: 1px solid #ccc"></div>
+
+<script>
+    var osmUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+            osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib}),
+            map = new L.Map('map', {layers: [osm], center: new L.LatLng(54.505, -2.04), zoom: 6});
+
+    var drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+
+    // Set the title to show on the polygon button
+    L.drawLocal.draw.toolbar.buttons.polygon = 'Draw a sexy polygon!';
+
+    var drawControl = new L.Control.Draw({
+        position: 'topright',
+        draw: {
+            polyline: false,
+            polygon: false,
+            circle: false,
+            marker: false,
+circlemarker: false
+        },
+        edit: {
+            featureGroup: drawnItems,
+            remove: true
+        }
+    });
+    map.addControl(drawControl);
+
+    map.on(L.Draw.Event.CREATED, function (e) {
+        var type = e.layerType,
+                layer = e.layer;
+
+        if (type === 'marker') {
+            layer.bindPopup('A popup!');
+        }
+
+        drawnItems.addLayer(layer);
+    });
+
+    map.on(L.Draw.Event.EDITED, function (e) {
+        var layers = e.layers;
+        var countOfEditedLayers = 0;
+        layers.eachLayer(function (layer) {
+            countOfEditedLayers++;
+        });
+        console.log("Edited " + countOfEditedLayers + " layers");
+    });
+
+map.on(L.Draw.Event.CREATED, function (e) {
+    var layer = e.layer;
+    drawnItems.addLayer(layer);
+
+
+document.getElementById('nw').value = layer.getLatLngs();
+document.getElementById('nw').value = document.getElementById('nw').value.split("),")[1].split("LatLng(")[1];
+
+document.getElementById('ne').value = layer.getLatLngs();
+document.getElementById('ne').value = document.getElementById('ne').value.split("),")[2].split("LatLng(")[1];
+
+
+document.getElementById('sw').value = layer.getLatLngs();
+document.getElementById('sw').value = document.getElementById('sw').value.split("),")[0].split("LatLng(")[1];
+
+
+document.getElementById('se').value = layer.getLatLngs();
+document.getElementById('se').value = document.getElementById('se').value.split("),")[3].split("LatLng(")[1];
+
+
+});
+
+    L.DomUtil.get('changeColor').onclick = function () {
+        drawControl.setDrawingOptions({rectangle: {shapeOptions: {color: '#004a80'}}});
+    };
+
+</script>
+
+
+<div style="position: absolute; top: 5%; right: 5%; width: 30%">NW point: <input id="nw" style = "width: 30%; height: 10%;">   NE point: <input id="ne" style = "width: 30%; height: 10%;"></div>
+
+
+<div style="position: absolute; top: 15%; right: 5%; width: 30%">SW point: <input id="sw" style = "width: 30%; height: 10%;">   SE point: <input id="se" style = "width: 30%; height: 10%;"></div>
+
+
+<div style="position: absolute; top: 25%; right: 1%; width: 30%"><button style="width:70%; height: 10%;" onclick="submit_coords()">Submit Coordinates</button></div>
+</body>
+</html>

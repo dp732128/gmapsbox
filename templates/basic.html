@@ -144,7 +144,7 @@ document.getElementById('se').value = document.getElementById('se').value.split(
 function submit_coords() {
  var myreq= new XMLHttpRequest();
 
-    myreq.open("GET", "/getcoords?coords=" + document.getElementById('nw').value + "," + document.getElementById('sw').value + "," + document.getElementById('se').value + "," + document.getElementById('ne').value + ",", true);
+    myreq.open("GET", "/getcoords?coords=" + document.getElementById('nw').value + ";" + document.getElementById('sw').value + ";" + document.getElementById('se').value + ";" + document.getElementById('ne').value + ";", true);
     
     myreq.send();
 

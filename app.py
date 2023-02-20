@@ -14,9 +14,9 @@ def index():
 @app.route('/getcoords', methods=['GET'])
 def get_coords():
    coords = request.args['coords']
-   textsearch = request.args['textsearch']
+   #textsearch = request.args['textsearch']
    print(coords)
-   print(textsearch)
+   #print(textsearch)
    return "Request received" 
     
 app.run()

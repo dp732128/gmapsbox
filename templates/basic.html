@@ -129,7 +129,7 @@ document.getElementById('se').value = document.getElementById('se').value.split(
 </script>
 
 
-<input style="position: absolute; top: 3%; right: 2.5%; width: 35%; height: 7%; text-align: center;" value="Please enter business type to search for">    
+<input id="textsch" style="position: absolute; top: 3%; right: 2.5%; width: 35%; height: 7%; text-align: center;" value="Please enter business type to search for">    
     
 <div style="position: absolute; top: 15%; right: 5%; width: 30%">NW point: <input id="nw" style = "width: 30%; height: 10%;">   NE point: <input id="ne" style = "width: 30%; height: 10%;"></div>
 
@@ -144,7 +144,7 @@ document.getElementById('se').value = document.getElementById('se').value.split(
 function submit_coords() {
  var myreq= new XMLHttpRequest();
 
-    myreq.open("GET", "/getcoords?coords=" + document.getElementById('nw').value + ";" + document.getElementById('sw').value + ";" + document.getElementById('se').value + ";" + document.getElementById('ne').value + ";", true);
+    myreq.open("GET", "/getcoords?textsearch=" + document.getElementById('nw').value + "&coords=" + document.getElementById('nw').value + ";" + document.getElementById('sw').value + ";" + document.getElementById('se').value + ";" + document.getElementById('ne').value + ";", true);
     
     myreq.send();
 

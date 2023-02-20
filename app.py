@@ -14,9 +14,12 @@ def index():
 @app.route('/getcoords', methods=['GET'])
 def get_coords():
    coords = request.args['coords']
-   #textsearch = request.args['textsearch']
+   
    print(coords)
-   #print(textsearch)
+   
+   # Do stuff with coords, note the textsearch is bundled in, format returned is "textsearch--nwcoords--swcoords--etc..."
+   # Recommend doing the Google Maps box stuff in here - trying the normal csv export to Colab or returning values/file to this front end
+   
    return "Request received" 
     
 app.run()

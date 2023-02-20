@@ -13,8 +13,10 @@ def index():
 
 @app.route('/getcoords', methods=['GET'])
 def get_coords():
-   coords = request.args['coords'].upper().replace(" ","")
+   coords = request.args['coords']
+   textsearch = request.args['textsearch']
    print(coords)
-   return coords 
+   print(textsearch)
+   return "Request received" 
     
 app.run()

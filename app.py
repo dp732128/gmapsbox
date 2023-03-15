@@ -26,5 +26,7 @@ def get_coords():
    # Recommend doing the Google Maps box stuff in here - trying the normal csv export to Colab or returning values/file to this front end
    
    return "Request received" 
+
+get_coords()
     
 app.run()

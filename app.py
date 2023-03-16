@@ -13,11 +13,11 @@ def index():
 
 @app.route('/getcoords', methods=['GET'])
 def get_coords():
+   print("original coords",coords)
    coords = request.args['coords']
    # Split the string by the "--" delimiter
    coords = coords[:-2]
    coords = coords.replace(")","")
-   print(coords)
    coord_strings = coords.split("--")
       # Extract the search query
    search_query = coord_strings[0]
@@ -25,7 +25,7 @@ def get_coords():
    # Extract the latitude and longitude values for each coordinate string
    coordinates = []
    for coord_string in coord_strings[1:]:
-       lat, long = coord_string.split(",+")
+       lat, long = coord_string.split(",")
        lat = float(lat)
        long = float(long)
        coordinates.append((lat, long))

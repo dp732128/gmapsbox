@@ -113,8 +113,6 @@ def get_place_ids(api_key, location_list, radius, keyword):
     # Return the unique place IDs
     return place_ids
    
-   
-   import math
 
 def all(north, south, east, west, box_side_length_km, search, api_key):
 

@@ -18,6 +18,39 @@ def get_coords():
    coords = coords[:-2]
    coords = coords.replace(")","")
    print(coords)
+   coord_strings = coords.split("--")
+      # Extract the search query
+   search_query = coord_strings[0]
+
+   # Extract the latitude and longitude values for each coordinate string
+   coordinates = []
+   for coord_string in coord_strings[1:]:
+       lat, long = coord_string.split(",+")
+       lat = float(lat)
+       long = float(long)
+       coordinates.append((lat, long))
+
+   # Print the results
+   print("Search Query:", search_query)
+   print("Coordinates:")
+   for coord in coordinates:
+       print(coord)
+
+   # Extract latitude and longitude values separately
+   latitudes = [coord[0] for coord in coordinates]
+   longitudes = [coord[1] for coord in coordinates]
+
+   # Get north, south, east, and west most values
+   north = max(latitudes)
+   south = min(latitudes)
+   east = max(longitudes)
+   west = min(longitudes)
+
+   # Print the results
+   print("North:", north)
+   print("South:", south)
+   print("East:", east)
+   print("West:", west)
    
 
    

@@ -215,19 +215,33 @@ def all(north, south, east, west, box_side_length_km, search, api_key):
     #return list of place ids
     return all_place_ids
    
-def get_place_details(place_id, api_key):
-    #send request to the google places api
-    url = f"https://maps.googleapis.com/maps/api/place/details/json?place_id={place_id}&fields=name,formatted_address,formatted_phone_number,website&key={api_key}"
+def get_place_details_new(place_id, api_key):
+    #Send request to the Google places API  
+    url = f"https://maps.googleapis.com/maps/api/place/details/json?place_id={place_id}&key={api_key}"
     response = requests.get(url).json()
+    #print(response)
+
+    for address_component in response["result"]["address_components"]:
+       if "postal_code" in address_component["types"]:
+            post_code = address_component["long_name"]
+
+    #Get relevent data points from response
     place_details = {
-        #Get relevent data points from response
         "name": response["result"].get("name"),
         "address": response["result"].get("formatted_address"),
         "phone_number": response["result"].get("formatted_phone_number"),
-        "website": response["result"].get("website")
+        "website": response["result"].get("website"),
+
+        #Also get county info from seperate function
+        "county": get_administrative_region(place_id, api_key),
+
+        "postal_code":post_code,
+        #"post_code": get_postal_code(place_id, api_key)
+        "first_post":post_code.split()[0]
+        
     }
-    #return place detail
-    print(place_details)
+
+    #Return place details including county details
     return place_details
 
 
@@ -275,6 +289,12 @@ def get_coords():
    test = all(north,south,east,west,10,search_query,"AIzaSyDyHYFGmruIyKYmcBw6iKPIYZdfx1fV_AM")
    print(test)
    
+   all_details = []
+   for place in test:
+      single = get_place_details_new(place,"AIzaSyDyHYFGmruIyKYmcBw6iKPIYZdfx1fV_AM")
+      all_details.append(single)
+   
+   print(all_details)
    # Do stuff with coords, note the textsearch is bundled in, format returned is "textsearch--nwcoords--swcoords--etc..."
    # Recommend doing the Google Maps box stuff in here - trying the normal csv export to Colab or returning values/file to this front end
    print("Received request with coords:", coords)

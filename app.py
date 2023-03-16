@@ -152,8 +152,7 @@ def all(north, south, east, west, box_side_length_km, search, api_key):
     #return list of place ids
     return all_place_ids
    
-   
-   def get_place_details(place_id, api_key):
+def get_place_details(place_id, api_key):
     #send request to the google places api
     url = f"https://maps.googleapis.com/maps/api/place/details/json?place_id={place_id}&fields=name,formatted_address,formatted_phone_number,website&key={api_key}"
     response = requests.get(url).json()
@@ -166,7 +165,7 @@ def all(north, south, east, west, box_side_length_km, search, api_key):
     }
     #return place details
    print(place_details)
-    return place_details
+   return place_details
 
 
 @app.route('/getcoords', methods=['GET'])

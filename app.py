@@ -316,23 +316,24 @@ def get_coords():
    print("East:", east)
    print("West:", west)
    
-   test = all(north,south,east,west,10,search_query,"AIzaSyDyHYFGmruIyKYmcBw6iKPIYZdfx1fV_AM")
-   print(test)
+   box_search = all(north,south,east,west,10,search_query,"AIzaSyDyHYFGmruIyKYmcBw6iKPIYZdfx1fV_AM")
+   print(box_search)
    
    all_details = []
-   for place in test:
+   for place in box_search:
       single = get_place_details_new(place,"AIzaSyDyHYFGmruIyKYmcBw6iKPIYZdfx1fV_AM")
       all_details.append(single)
    
    print(all_details)
    filename = "download.csv"
    write_to_csv_new(filename,all_details)
+   
+   print("Received request with coords:", coords)
    return send_file("/content/gmapsbox/download.csv", as_attachment=True)
    #return("hi")
    
    # Do stuff with coords, note the textsearch is bundled in, format returned is "textsearch--nwcoords--swcoords--etc..."
    # Recommend doing the Google Maps box stuff in here - trying the normal csv export to Colab or returning values/file to this front end
-   print("Received request with coords:", coords)
 
     
 app.run()

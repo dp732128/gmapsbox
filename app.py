@@ -170,6 +170,12 @@ def get_place_ids_one_location(api_key, lat, lng, radius, keyword):
 
     # Return the unique place IDs
     return place_ids
+   
+def remove_duplicates(places):
+    # Convert the list to a set to remove duplicates
+    unique_places = set(places)
+    # Convert the set back to a list
+    return list(unique_places)
 
 def all(north, south, east, west, box_side_length_km, search, api_key):
 

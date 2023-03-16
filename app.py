@@ -177,6 +177,13 @@ def remove_duplicates(places):
     # Convert the set back to a list
     return list(unique_places)
 
+def write_to_csv_new(file_name, details_list):
+    with open(file_name, "w", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=["name", "address", "phone_number", "website", "county","postal_code","first_post"])
+        writer.writeheader()
+        for row in details_list:
+            writer.writerow(row)
+
 def all(north, south, east, west, box_side_length_km, search, api_key):
 
     #Create the list to store place ids
@@ -318,10 +325,13 @@ def get_coords():
       all_details.append(single)
    
    print(all_details)
+   filename = "download me"
+   write_to_csv_new(filename,all_details)
+   return sendfile(filename, as_attachment=True)
+   
    # Do stuff with coords, note the textsearch is bundled in, format returned is "textsearch--nwcoords--swcoords--etc..."
    # Recommend doing the Google Maps box stuff in here - trying the normal csv export to Colab or returning values/file to this front end
    print("Received request with coords:", coords)
-   return "Success"
 
     
 app.run()

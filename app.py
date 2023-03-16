@@ -163,9 +163,9 @@ def get_place_details(place_id, api_key):
         "phone_number": response["result"].get("formatted_phone_number"),
         "website": response["result"].get("website")
     }
-    #return place details
-   print(place_details)
-   return place_details
+    #return place detail
+    print(place_details)
+    return place_details
 
 
 @app.route('/getcoords', methods=['GET'])

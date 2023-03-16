@@ -13,8 +13,8 @@ def index():
 
 @app.route('/getcoords', methods=['GET'])
 def get_coords():
-   print("original coords",coords)
    coords = request.args['coords']
+   print("original coords",coords)
    # Split the string by the "--" delimiter
    coords = coords[:-2]
    coords = coords.replace(")","")

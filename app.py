@@ -113,6 +113,63 @@ def get_place_ids(api_key, location_list, radius, keyword):
     # Return the unique place IDs
     return place_ids
    
+def get_place_ids_one_location(api_key, lat, lng, radius, keyword):
+    # Create an empty array to store the place IDs
+    place_ids = []
+
+    # Construct the API request URL
+    url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={lat},{lng}&radius={radius}&keyword={keyword}&key={api_key}"
+
+    # Send the API request
+    response = requests.get(url)
+
+    # Sleep to avoid overloading Google API
+    time.sleep(5)
+
+    # Check if the API request was successful
+    if response.status_code == 200:
+        data = response.json()
+        results = data.get("results", [])
+
+        # Loop through the results and add the place_id to the array if it hasn't already been added
+        for result in results:
+            place_id = result["place_id"]
+            if place_id not in place_ids:
+                place_ids.append(place_id)
+
+        # Check if there are more pages of results
+        next_page_token = data.get("next_page_token")
+        while next_page_token:
+            # Construct the API request URL for the next page of results
+            url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken={next_page_token}&key={api_key}"
+
+            # Send the API request for the next page of results
+            response = requests.get(url)
+
+            # Sleep to avoid overloading Google API
+            time.sleep(5)
+
+            # Check if the API request was successful
+            if response.status_code == 200:
+                data = response.json()
+                results = data.get("results", [])
+
+                # Loop through the results and add the place_id to the array if it hasn't already been added
+                for result in results:
+                    place_id = result["place_id"]
+                    if place_id not in place_ids:
+                        place_ids.append(place_id)
+
+                # Check if there are more pages of results
+                next_page_token = data.get("next_page_token")
+            else:
+                print("API request failed with status code", response.status_code)
+                break
+    else:
+        print("API request failed with status code", response.status_code)
+
+    # Return the unique place IDs
+    return place_ids
 
 def all(north, south, east, west, box_side_length_km, search, api_key):
 

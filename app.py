@@ -210,7 +210,7 @@ def get_coords():
    print("East:", east)
    print("West:", west)
    
-   all(north,south,east,west,10)
+   all(north,south,east,west,10,search_query,"api_key")
 
    
    # Do stuff with coords, note the textsearch is bundled in, format returned is "textsearch--nwcoords--swcoords--etc..."

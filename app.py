@@ -327,7 +327,7 @@ def get_coords():
    print(all_details)
    filename = "download me"
    write_to_csv_new(filename,all_details)
-   return send_file(filename, as_attachment=True)
+   return send_file("/content/sample_data/README.md", as_attachment=True)
    
    # Do stuff with coords, note the textsearch is bundled in, format returned is "textsearch--nwcoords--swcoords--etc..."
    # Recommend doing the Google Maps box stuff in here - trying the normal csv export to Colab or returning values/file to this front end

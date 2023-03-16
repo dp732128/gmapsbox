@@ -325,7 +325,7 @@ def get_coords():
       all_details.append(single)
    
    print(all_details)
-   filename = "download me here"
+   filename = "download.csv"
    write_to_csv_new(filename,all_details)
    #return send_file("/content/sample_data/README.md", as_attachment=True)
    return("hi")

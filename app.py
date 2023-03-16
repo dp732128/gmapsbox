@@ -214,6 +214,29 @@ def all(north, south, east, west, box_side_length_km, search, api_key):
 
     #return list of place ids
     return all_place_ids
+
+
+def get_administrative_region(place_id,api_key):
+
+  #Send Request to Google places API
+  url = f"https://maps.googleapis.com/maps/api/geocode/json?place_id={place_id}&key={api_key}"
+  response = requests.get(url).json()
+  #Take the county info out of the response
+  for address_component in response["results"][0]["address_components"]:
+    if "administrative_area_level_2" in address_component["types"]:
+
+      #Return county name the place is located in
+      return address_component["long_name"]
+
+
+
+
+#test caseif __name__ == "__main__":
+api_key = "AIzaSyDyHYFGmruIyKYmcBw6iKPIYZdfx1fV_AM"
+location = "ChIJWzJ3pQRceUgRiWQgaRF5uvg"
+administrative_region = get_administrative_region(location,api_key)
+print(administrative_region)
+
    
 def get_place_details_new(place_id, api_key):
     #Send request to the Google places API  

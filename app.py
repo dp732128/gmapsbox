@@ -266,8 +266,8 @@ def get_coords():
    print("East:", east)
    print("West:", west)
    
-   all(north,south,east,west,10,search_query,"api_key")
-
+   test = all(north,south,east,west,10,search_query,"api_key")
+   print(test)
    
    # Do stuff with coords, note the textsearch is bundled in, format returned is "textsearch--nwcoords--swcoords--etc..."
    # Recommend doing the Google Maps box stuff in here - trying the normal csv export to Colab or returning values/file to this front end

@@ -238,12 +238,6 @@ def get_administrative_region(place_id,api_key):
 
 
 
-#test caseif __name__ == "__main__":
-api_key = "AIzaSyDyHYFGmruIyKYmcBw6iKPIYZdfx1fV_AM"
-location = "ChIJWzJ3pQRceUgRiWQgaRF5uvg"
-administrative_region = get_administrative_region(location,api_key)
-print(administrative_region)
-
    
 def get_place_details_new(place_id, api_key):
     #Send request to the Google places API  

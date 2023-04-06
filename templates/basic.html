@@ -156,16 +156,28 @@ document.getElementById('se').value = document.getElementById('se').value.split(
 
 <script>
 function submit_coords() {
- var myreq= new XMLHttpRequest();
-
-    myreq.open("GET", "/getcoords?coords=" + document.getElementById('textsch').value + "--" + document.getElementById('nw').value + "--" + document.getElementById('sw').value + "--" + document.getElementById('se').value + "--" + document.getElementById('ne').value + "--", true);
+    var selectedFields = [];
+    if (document.getElementById('name').checked) {
+        selectedFields.push("name");
+    }
+    if (document.getElementById('address').checked) {
+        selectedFields.push("address");
+    }
+    if (document.getElementById('phone_number').checked) {
+        selectedFields.push("phone_number");
+    }
+    // Add more fields as needed
     
+    var myreq = new XMLHttpRequest();
+    var url = "/getcoords?coords=" + document.getElementById('textsch').value + "--" + document.getElementById('nw').value + "--" + document.getElementById('sw').value + "--" + document.getElementById('se').value + "--" + document.getElementById('ne').value + "--";
+    if (selectedFields.length > 0) {
+        url += "&fields=" + selectedFields.join(",");
+    }
+    myreq.open("GET", url, true);
     myreq.send();
-
-alert(myreq.responseText);
-   
-    
+    alert(myreq.responseText);
 }
+
     
 </script>
     

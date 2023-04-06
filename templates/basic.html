@@ -157,28 +157,29 @@ document.getElementById('se').value = document.getElementById('se').value.split(
 
 <script>
 function submit_coords() {
-    
     var myreq = new XMLHttpRequest();
-    var url = "/getcoords?coords=" + document.getElementById('textsch').value + "--" + document.getElementById('nw').value + "--" + document.getElementById('sw').value + "--" + document.getElementById('se').value + "--" + document.getElementById('ne').value + "--";
-    if (selectedFields.length > 0) {
-        url += "&fields=" + selectedFields.join(",");
+    var url = "/getcoords?";
+    var coords = document.getElementById('textsch').value + "--" + document.getElementById('nw').value + "--" + document.getElementById('sw').value + "--" + document.getElementById('se').value + "--" + document.getElementById('ne').value + "--";
+    var fields = [];
+
+    // Get selected fields from checkboxes
+    var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
+    checkboxes.forEach(function(checkbox) {
+        fields.push(checkbox.value);
+    });
+
+    // Add coordinates and fields to URL
+    url += "coords=" + coords;
+    if (fields.length > 0) {
+        url += "&fields=" + fields.join(",");
     }
+
+    // Send request to server
     myreq.open("GET", url, true);
     myreq.send();
     alert(myreq.responseText);
 }
 
-const form = document.querySelector("#myForm");
-
-      form.addEventListener("submit", (event) => {
-        event.preventDefault();
-        
-        const selectedFields = [];
-        const checkboxes = form.querySelectorAll('input[name="fields"]:checked');
-        
-        checkboxes.forEach((checkbox) => {
-          selectedFields.push(checkbox.value);
-        });
 
 
 

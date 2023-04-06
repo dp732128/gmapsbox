@@ -279,6 +279,7 @@ def get_coords():
    coord_strings = coords.split("--")
       # Extract the search query
    search_query = coord_strings[0]
+   print(search_query)
 
    # Extract the latitude and longitude values for each coordinate string
    coordinates = []

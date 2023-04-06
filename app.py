@@ -271,6 +271,7 @@ def get_place_details_new(place_id, api_key):
 
 @app.route('/getcoords', methods=['GET'])
 def get_coords():
+    print(request.args)
    coords = request.args['coords']
    print("original coords",coords)
    # Split the string by the "--" delimiter

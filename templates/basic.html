@@ -140,6 +140,7 @@ document.getElementById('se').value = document.getElementById('se').value.split(
   
   <label for="website">Website:</label>
   <input type="checkbox" id="website" name="fields" value="website"><br>
+  <button type="submit">Submit</button>
 </form>
 
 
@@ -156,17 +157,6 @@ document.getElementById('se').value = document.getElementById('se').value.split(
 
 <script>
 function submit_coords() {
-    var selectedFields = [];
-    if (document.getElementById('name').checked) {
-        selectedFields.push("name");
-    }
-    if (document.getElementById('address').checked) {
-        selectedFields.push("address");
-    }
-    if (document.getElementById('phone_number').checked) {
-        selectedFields.push("phone_number");
-    }
-    // Add more fields as needed
     
     var myreq = new XMLHttpRequest();
     var url = "/getcoords?coords=" + document.getElementById('textsch').value + "--" + document.getElementById('nw').value + "--" + document.getElementById('sw').value + "--" + document.getElementById('se').value + "--" + document.getElementById('ne').value + "--";
@@ -177,6 +167,19 @@ function submit_coords() {
     myreq.send();
     alert(myreq.responseText);
 }
+
+const form = document.querySelector("#myForm");
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        
+        const selectedFields = [];
+        const checkboxes = form.querySelectorAll('input[name="fields"]:checked');
+        
+        checkboxes.forEach((checkbox) => {
+          selectedFields.push(checkbox.value);
+        });
+
 
 
     

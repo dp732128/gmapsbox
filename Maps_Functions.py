@@ -4,10 +4,22 @@ import requests
 import time
 
 
-
-
-
 def split_bounds(north, south, east, west, box_side_length_km):
+    """
+    Split a large georgraphic box into smaller boxes
+
+    Arguments:
+    north -- the north lat for the geographic box
+    south -- the south lat for the geographic box
+    east -- the east long for the geographic box
+    west -- the west long for the geographic box
+    box_side_length_km -- the size you want the smaller boxes to be (box_side_lenth_km of 10 would mean each smaller box is 10 square kilometers big)
+
+    Returns:
+    
+    An array of boxes with north,south,east,west and lat long average values 
+    
+    """
 
     #Calculate central lat/lng values
     avg_lat = (north +south)/2
@@ -45,6 +57,25 @@ def split_bounds(north, south, east, west, box_side_length_km):
 
 
 def get_place_ids(api_key, location_list, radius, keyword):
+    '''
+    
+    Do a google maps search over a list of locations and compile the results
+
+    Arguments:
+    api_key -- the key used for the google maps api
+    location_list -- a set of locations (in the form of lat,long)
+    radius -- the radius for the google maps search
+    keyword -- the search word for the search
+
+    Returns:
+
+    A list of place_ids recognized by google. (these can be used to request details)
+    
+    '''
+
+
+
+
     # Create an empty array to store the place IDs
     place_ids = []
 
@@ -107,6 +138,22 @@ def get_place_ids(api_key, location_list, radius, keyword):
     return place_ids
    
 def get_place_ids_one_location(api_key, lat, lng, radius, keyword):
+    '''
+    
+    Do a google maps search over a list of locations and compile the results
+
+    Arguments:
+    api_key -- the key used for the google maps api
+    lat -- The latitude value for the search point
+    lng -- the longatide value for the search point
+    radius -- the radius for the google maps search
+    keyword -- the search word for the search
+
+    Returns:
+
+    A list of place_ids recognized by google for this search location. (these can be used to request details)
+    
+    '''
     # Create an empty array to store the place IDs
     place_ids = []
 
@@ -166,12 +213,39 @@ def get_place_ids_one_location(api_key, lat, lng, radius, keyword):
     return place_ids
    
 def remove_duplicates(places):
+    '''
+    Takes a list of places and removes duplicates
+
+    Arguments:
+    places -- a list of place ids
+
+    Returns 
+
+    The place ids list with duplicates removed
+    
+    
+    '''
     # Convert the list to a set to remove duplicates
     unique_places = set(places)
     # Convert the set back to a list
     return list(unique_places)
 
 def write_to_csv_new(file_name, details_list):
+    '''
+
+    Takes a list of location details and converts to csv format then writes to location
+
+    Arguments:
+
+    file_name -- name to be given to file when created
+    details_list -- the list of places and their details to be turned into the csv
+
+    Returns:
+
+    Nothing ***To Change. Either have it return a file or a error code value to indicate success.*** 
+    
+    
+    '''
     with open(file_name, "w", newline="") as file:
         writer = csv.DictWriter(file, fieldnames=["name", "address", "phone_number", "website", "county","postal_code","first_post"])
         writer.writeheader()
@@ -179,6 +253,24 @@ def write_to_csv_new(file_name, details_list):
             writer.writerow(row)
 
 def all(north, south, east, west, box_side_length_km, search, api_key):
+    '''
+    Searches for all of a given search query in a geographic area. 
+
+    Arguments:
+    north -- north lat of the geographic area
+    south -- south lat of the geographic area
+    east -- east long of the geographic area
+    west -- west long of the geographic area
+    box_side_length_km -- Initial box search size. **Deprecated and probably not nessesary - fix later**
+    search -- search value to use over google maps
+    api_key -- api key to allow use of google maps api
+
+    Returns:
+
+    A list of place ids corresponding to matches within the geographic area.
+    
+    
+    '''
 
     #Create the list to store place ids
     all_place_ids = []
@@ -218,6 +310,21 @@ def all(north, south, east, west, box_side_length_km, search, api_key):
 
 
 def get_administrative_region(place_id,api_key):
+  '''
+
+  Gets the administrative region of a location is situated in
+
+  Arguments:
+
+  place_id -- The place id to find the region of
+  api_key -- Key used to allow access to Google api
+
+  Returns:
+
+  A string name of administrative region
+  
+  
+  '''
 
   #Send Request to Google places API
   url = f"https://maps.googleapis.com/maps/api/geocode/json?place_id={place_id}&key={api_key}"
@@ -229,11 +336,22 @@ def get_administrative_region(place_id,api_key):
       #Return county name the place is located in
       return address_component["long_name"]
 
-
-
-
    
 def get_place_details_new(place_id, api_key):
+    '''
+    
+    Get the place details of a location from google
+
+    Arguments:
+    place_id -- The place id for a place on google
+    api_key -- Key used to allow access to Google api
+    ***Want to take in Fields, to decide what things to get details of.***
+
+    Returns:
+
+    A dictionary containing various fields and their value. Example: {'name':'Happy shop','address':'Happy street, new york', etc ...}
+    
+    '''
     #Send request to the Google places API  
     url = f"https://maps.googleapis.com/maps/api/place/details/json?place_id={place_id}&key={api_key}"
     response = requests.get(url).json()

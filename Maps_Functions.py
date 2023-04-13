@@ -336,7 +336,7 @@ def get_administrative_region(place_id,api_key):
       #Return county name the place is located in
       return address_component["long_name"]
 
-   
+
 def get_place_details_new(place_id, api_key):
     '''
     

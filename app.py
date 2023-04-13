@@ -32,6 +32,8 @@ def get_coords():
 
    print("Fields selected:")
    print(fields)
+   field_list = fields.split(",")
+   print(field_list)
 
    # Extract the latitude and longitude values for each coordinate string
    coordinates = []

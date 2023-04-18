@@ -1,8 +1,8 @@
 import requests
 import Maps_Functions as MF
 
-fields = "name,formatted_address,address_component,geometry,place_id"
-def get_place_details_new(place_id, api_key,fields,):
+fields_in = "name,formatted_address,post_code,geometry,place_id,county"
+def get_place_details_new(place_id, api_key,fields_in):
     '''
     
     Get the place details of a location from google
@@ -19,11 +19,25 @@ def get_place_details_new(place_id, api_key,fields,):
     '''
 
     #Split fields for use later in the code
-    fields_split = fields.split(",")
-    fields_split.append("county")
+    fields_split = fields_in.split(",")
     print(fields_split)
+
+    fields_out = []
+    for field in fields_split:
+        if(field != "county" and field != "post_code"):
+            fields_out.append(field)
+        else:
+            fields_out.append("address_components")
+    print(fields_out)
+    fields_set = set(fields_out)
+    print(fields_set)
+    fields_out_str = ', '.join(fields_set)
+
+
+
+
     #Send request to the Google places API  
-    url = f"https://maps.googleapis.com/maps/api/place/details/json?place_id={place_id}&key={api_key}&fields={fields}"
+    url = f"https://maps.googleapis.com/maps/api/place/details/json?place_id={place_id}&key={api_key}&fields={fields_out_str}"
     response = requests.get(url).json()
     print(response)
     result = response["result"]
@@ -55,7 +69,7 @@ def get_place_details_new(place_id, api_key,fields,):
 
 
 
-                
+
     if("place_id" in fields_split):
         place_details["place id"] = place_id
     
@@ -79,5 +93,5 @@ key = "AIzaSyChwMaYXlEXc0HpfCKJXUX2wPczmXWAmTw"
 place = "ChIJWzJ3pQRceUgRiWQgaRF5uvg"
 halls = "ChIJRTc3mHymfkgRaaB81GAAGXU"
 
-data = get_place_details_new(halls,key,fields)
+data = get_place_details_new(halls,key,fields_in)
 print(data)

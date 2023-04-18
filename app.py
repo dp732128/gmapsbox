@@ -63,12 +63,12 @@ def get_coords():
    print("East:", east)
    print("West:", west)
    
-   box_search = MF.all(north,south,east,west,10,search_query,"")
+   box_search = MF.all(north,south,east,west,1,search_query,"AIzaSyChwMaYXlEXc0HpfCKJXUX2wPczmXWAmTw")
    print(box_search)
    
    all_details = []
    for place in box_search:
-      single = MF.get_place_details_new(place,"")
+      single = MF.get_place_details_new(place,"AIzaSyChwMaYXlEXc0HpfCKJXUX2wPczmXWAmTw")
       all_details.append(single)
    
    print(all_details)

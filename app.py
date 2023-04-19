@@ -68,12 +68,17 @@ def get_coords():
    
    all_details = []
    for place in box_search:
-      single = MF.get_place_details_new(place,"AIzaSyChwMaYXlEXc0HpfCKJXUX2wPczmXWAmTw")
+      single = MF.get_place_details_new(place,"AIzaSyChwMaYXlEXc0HpfCKJXUX2wPczmXWAmTw",fields)
       all_details.append(single)
    
-   print(all_details)
    filename = "download.csv"
-   MF.write_to_csv_new(filename,all_details)
+   if(len(all_details)>0):
+      print("TOTAL RESULTS:"+str(len(all_details)))
+      write_fields = all_details[0]
+      MF.write_to_csv_new(filename,all_details,write_fields)
+      print("Written to csv at:"+filename)
+   else:
+      print("NO RESULTS")
    
    print("Received request with coords:", coords)
    return send_file("download.csv", as_attachment=True)

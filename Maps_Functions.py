@@ -230,7 +230,7 @@ def remove_duplicates(places):
     # Convert the set back to a list
     return list(unique_places)
 
-def write_to_csv_new(file_name, details_list):
+def write_to_csv_new(file_name, details_list,fields):
     '''
 
     Takes a list of location details and converts to csv format then writes to location
@@ -246,8 +246,8 @@ def write_to_csv_new(file_name, details_list):
     
     
     '''
-    with open(file_name, "w", newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=["name", "address", "phone_number", "website", "county","postal_code","first_post"])
+    with open(file_name, "w", newline="", encoding="utf-8") as file:
+        writer = csv.DictWriter(file, fieldnames=fields)
         writer.writeheader()
         for row in details_list:
             writer.writerow(row)
@@ -336,8 +336,7 @@ def get_administrative_region(place_id,api_key):
       #Return county name the place is located in
       return address_component["long_name"]
 
-
-def get_place_details_new(place_id, api_key):
+def get_place_details_new(place_id, api_key,fields_in):
     '''
     
     Get the place details of a location from google
@@ -345,37 +344,67 @@ def get_place_details_new(place_id, api_key):
     Arguments:
     place_id -- The place id for a place on google
     api_key -- Key used to allow access to Google api
-    ***Want to take in Fields, to decide what things to get details of.***
+    fields_in -- Fields to be requested from the google places api
+
 
     Returns:
 
     A dictionary containing various fields and their value. Example: {'name':'Happy shop','address':'Happy street, new york', etc ...}
     
     '''
+
+    #Takes the fields_in. Splits it and creates a valid field query to put into the google places api request. 
+    #Reason for this in an example: Both Post Code and County come from the address components, so cant call the field address_components in fields as could mean either
+    fields_split = fields_in.split(",")
+
+    fields_out = []
+    for field in fields_split:
+        if(field == "place_id"):
+            1+1
+        elif(field != "county" and field != "post_code"):
+            fields_out.append(field)
+        else:
+            fields_out.append("address_components")
+    fields_set = set(fields_out)
+    fields_out_str = ','.join(fields_set)
+
+
+
+
     #Send request to the Google places API  
-    url = f"https://maps.googleapis.com/maps/api/place/details/json?place_id={place_id}&key={api_key}"
+    url = f"https://maps.googleapis.com/maps/api/place/details/json?place_id={place_id}&key={api_key}&fields={fields_out_str}"
     response = requests.get(url).json()
-    #print(response)
+    result = response["result"]
+    place_details = {}
 
-    for address_component in response["result"]["address_components"]:
-       if "postal_code" in address_component["types"]:
-            post_code = address_component["long_name"]
+    #Depending on which fields are selected, take info from the google places api response
 
-    #Get relevent data points from response
-    place_details = {
-        "name": response["result"].get("name"),
-        "address": response["result"].get("formatted_address"),
-        "phone_number": response["result"].get("formatted_phone_number"),
-        "website": response["result"].get("website"),
+    if("name"in fields_split):
+        place_details["name"] = result.get("name")
+    if("formatted_address" in fields_split):
+        place_details["formatted_address"] = result.get("formatted_address")
+    if("post_code" in fields_split):
+            for address_component in response["result"]["address_components"]:
+                if('postal_code' in address_component['types']):
+                    place_details["post_code"] = address_component["long_name"]
+    if('website' in fields_split):
+        place_details["website"] = result.get("website")
+    if("phone" in fields_split):
+         place_details["phone number"] = result.get("formatted_phone_number")
+    if("county" in fields_split):
+        for address_component in response["result"]["address_components"]:
+            if('administrative_area_level_2' in address_component['types']):
+                place_details["county"] = address_component["long_name"]
+    if("geometry" in fields_split):
+        for component in response["result"]["geometry"]:
+            if('location') in component:
+                place_details["lat"] = response["result"]["geometry"]["location"]["lat"]
+                place_details["lng"] = response["result"]["geometry"]["location"]["lng"]
+    if("reviews" in fields_split):
+        place_details["reviews"] = result.get("reviews")
+    if("place_id" in fields_split):
+        place_details["place id"] = place_id
 
-        #Also get county info from seperate function
-        "county": get_administrative_region(place_id, api_key),
-
-        "postal_code":post_code,
-        #"post_code": get_postal_code(place_id, api_key)
-        "first_post":post_code.split()[0]
-        
-    }
 
     #Return place details including county details
     return place_details

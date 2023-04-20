@@ -2,7 +2,7 @@ import requests
 import Maps_Functions as MF
 import csv
 
-fields_in = "name,formatted_address,post_code,county,geometry,place_id"
+fields_in = "name,formatted_address,post_code,county,geometry,place_id,reviews"
 def get_place_details_new(place_id, api_key,fields_in):
     '''
     
@@ -113,7 +113,7 @@ def write_to_csv_new(file_name, details_list,fields):
     
     '''
     with open(file_name, "w", newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=fields)
+        writer = csv.DictWriter(file, fieldnames=fields,)
         writer.writeheader()
         for row in details_list:
             writer.writerow(row)
@@ -133,5 +133,27 @@ fieldnames = all_details[0]
 print(fieldnames)
 write_to_csv_new("test.csv",all_details,fieldnames)
 
+fields_split = fields_in.split(",")
+ratings = []
+if("reviews" in fields_split):
+    for location in all_details:
+        for review in location["reviews"]:
+            review_new = {"name":location["name"]}
+            #review["company"] = (location["name"])
+            review_new.update(review)
+            review_new['text'] = review_new['text'].replace("\n"," ")
+            ratings.append(review_new)
+
+write_to_csv_new("review test.csv",ratings,ratings[0])
+
+
+
+
+
 print(data)
 print(all_details)
+print("")
+print("")
+print("")
+print("")
+print(ratings)

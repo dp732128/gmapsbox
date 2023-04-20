@@ -18,6 +18,14 @@ def index():
 
 @app.route('/getcoords', methods=['GET'])
 def get_coords():
+   '''
+
+    Takes a list of location details and converts to csv format then writes to location
+
+    Takes in the Coords and Fields from the webpage. Splits the coords into the coords for the box and the search query and takes the field values.
+    Does a search based on the coordinate values and the search query. Brings back details depending on what fields were asked for.
+    
+    '''
    print(request.args)
    coords = request.args['coords']
    fields = request.args['fields']
@@ -63,7 +71,7 @@ def get_coords():
    print("East:", east)
    print("West:", west)
    
-   box_search = MF.all(north,south,east,west,1,search_query,"AIzaSyChwMaYXlEXc0HpfCKJXUX2wPczmXWAmTw")
+   box_search = MF.all(north,south,east,west,10,search_query,"AIzaSyChwMaYXlEXc0HpfCKJXUX2wPczmXWAmTw")
    print(box_search)
    
    all_details = []
@@ -76,7 +84,25 @@ def get_coords():
       print("TOTAL RESULTS:"+str(len(all_details)))
       write_fields = all_details[0]
       MF.write_to_csv_new(filename,all_details,write_fields)
-      print("Written to csv at:"+filename)
+      print("Written to csv at: "+filename)
+
+      fields_split = fields.split(",")
+      ratings = []
+      if("reviews" in fields_split):
+         for location in all_details:
+            for review in location["reviews"]:
+                  review_new = {"name":location["name"]}
+                  #review["company"] = (location["name"])
+                  review_new.update(review)
+                  review_new['text'] = review_new['text'].replace("\n"," ")
+                  ratings.append(review_new)
+         MF.write_to_csv_new("reviews.csv",ratings,ratings[0])
+         print("Review written to: reviews.csv")
+
+
+
+
+
    else:
       print("NO RESULTS")
    

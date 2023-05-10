@@ -71,7 +71,7 @@ def get_coords():
    print("East:", east)
    print("West:", west)
    
-   box_search = MF.all(north,south,east,west,0.5,search_query,"AIzaSyChwMaYXlEXc0HpfCKJXUX2wPczmXWAmTw")
+   box_search = MF.all(north,south,east,west,20,search_query,"AIzaSyChwMaYXlEXc0HpfCKJXUX2wPczmXWAmTw")
    print(box_search)
    
    all_details = []
@@ -92,7 +92,10 @@ def get_coords():
          for location in all_details:
             if(location["reviews"] is not None):
                for review in location["reviews"]:
+                     #print("location is:")
+                     #print(location)
                      review_new = {"name":location["name"]}
+                     review_new["place_id"] = location["place id"]
                      #review["company"] = (location["name"])
                      review_new.update(review)
                      review_new['text'] = review_new['text'].replace("\n"," ")

@@ -1,159 +1,172 @@
-import requests
-import Maps_Functions as MF
-import csv
+import Maps_Functions as MP
+import math
 
-fields_in = "name,formatted_address,post_code,county,geometry,place_id,reviews"
-def get_place_details_new(place_id, api_key,fields_in):
-    '''
-    
-    Get the place details of a location from google
+def split_bounds_exact(north, south, east, west, box_side_length_km):
+    """
+    Split a large georgraphic box into smaller boxes
 
     Arguments:
-    place_id -- The place id for a place on google
-    api_key -- Key used to allow access to Google api
-    fields_in -- Fields to be requested from the google places api
+    north -- the north lat for the geographic box
+    south -- the south lat for the geographic box
+    east -- the east long for the geographic box
+    west -- the west long for the geographic box
+    box_side_length_km -- the size you want the smaller boxes to be (box_side_lenth_km of 10 would mean each smaller box is 10 square kilometers big)
 
+    Returns:
+    
+    An array of boxes with north,south,east,west and lat long average values 
+    
+    """
+
+    #Calculate central lat/lng values
+    avg_lat = (north +south)/2
+    avg_lng = (east + west)/2
+
+    #Give length of integer change of 1 for lat and lng in km (So a change in lat of 12 to 13 covers 111.2 km)
+    lat_in_km = 111.2
+    lng_in_km = 111.2 * math.cos(math.radians(avg_lat))
+
+    #Calculate side length of boxes in lat/lng change
+    box_lat = box_side_length_km/lat_in_km
+    box_lng = box_side_length_km/lng_in_km
+
+    #Calculate the number of coordinate cutoffs for lat/lng directions for the boxes
+    #add one so you overrun to make sure you full emcompass the box defined in the function parameters
+    lat_cutoffs = int((north - south)/box_lat)
+    lng_cutoffs = int((east - west)/box_lng)
+
+    #create the boxes by dividing the region into smaller boxes
+    boxes = []
+    for i in range(lat_cutoffs):
+        for j in range(lng_cutoffs):
+            box_north = north - (i * box_lat)
+            box_south = box_north - box_lat
+            box_east = east - (j * box_lng)
+            box_west = box_east - box_lng
+
+            avg_lat = (box_north + box_south) / 2
+            avg_lng = (box_east + box_west) / 2
+
+            #Create box with north, south, east, west values and central lat/lng values
+            boxes.append((box_north, box_south, box_east, box_west, avg_lat, avg_lng))
+
+    return boxes
+
+def all_exact(north, south, east, west, box_side_length_km, search, api_key):
+    '''
+    Searches for all of a given search query in a geographic area. 
+
+    Arguments:
+    north -- north lat of the geographic area
+    south -- south lat of the geographic area
+    east -- east long of the geographic area
+    west -- west long of the geographic area
+    box_side_length_km -- Initial box search size. **Deprecated and probably not nessesary - fix later**
+    search -- search value to use over google maps
+    api_key -- api key to allow use of google maps api
 
     Returns:
 
-    A dictionary containing various fields and their value. Example: {'name':'Happy shop','address':'Happy street, new york', etc ...}
+    A list of place ids corresponding to matches within the geographic area.
+    
     
     '''
 
-    #Takes the fields_in. Splits it and creates a valid field query to put into the google places api request. 
-    #Reason for this in an example: Both Post Code and County come from the address components, so cant call the field address_components in fields as could mean either
-    fields_split = fields_in.split(",")
-    print(fields_split)
+    #Create the list to store place ids
+    all_place_ids = []
+    #Call the split bounds function to create smaller boxes
+    boxes = split_bounds_exact(north, south, east, west, box_side_length_km)
+    print(boxes)
 
-    fields_out = []
-    for field in fields_split:
-        if(field == "place_id"):
-            1+1
-        elif(field != "county" and field != "post_code"):
-            fields_out.append(field)
+
+    location_list = [(box[-2], box[-1]) for box in boxes]
+    #For each box
+    for box in boxes:
+
+
+        # Calculate the radius in meters
+        radius = box_side_length_km/(2 * math.sin(math.radians(45))) * 1000
+
+        #Get place_ids for one box search
+        one_location_place_ids = MP.get_place_ids_one_location(api_key, box[-2], box[-1], radius, search)
+        print("results 1 box:")
+        print(len(one_location_place_ids))
+
+        #If 60 results come back, ae: the return results was capped out by the google api
+        if len(one_location_place_ids) > 59:
+            # Recursively call the function for smaller boxes
+            recursive_results = all_exact(box[0], box[1], box[2], box[3], (box_side_length_km/2), search, api_key)
+
+            #Add each result from the recursive call to the list
+            for result in recursive_results:
+                all_place_ids.append(result)
         else:
-            fields_out.append("address_components")
-    print(fields_out)
-    fields_set = set(fields_out)
-    print(fields_set)
-    fields_out_str = ','.join(fields_set)
-    print(fields_out_str)
+            # Append the place IDs of the current box
+            for location in one_location_place_ids:
+                all_place_ids.append(location)
 
+    #Remove duplicate locations
+    all_place_ids = MP.remove_duplicates(all_place_ids)
 
+    #return list of place ids
+    return all_place_ids
 
-
-    #Send request to the Google places API  
-    url = f"https://maps.googleapis.com/maps/api/place/details/json?place_id={place_id}&key={api_key}&fields={fields_out_str}"
-    response = requests.get(url).json()
-    print(response)
-    result = response["result"]
-    print(result)
-    #print(response)
-    place_details = {}
-    if("name"in fields_split):
-        place_details["name"] = result.get("name")
-    if("formatted_address" in fields_split):
-        place_details["formatted_address"] = result.get("formatted_address")
-    if("post_code" in fields_split):
-            for address_component in response["result"]["address_components"]:
-                if('postal_code' in address_component['types']):
-                    place_details["post_code"] = address_component["long_name"]
-    if('website' in fields_split):
-        place_details["website"] = result.get("website")
-    if("phone" in fields_split):
-         place_details["phone number"] = result.get("formatted_phone_number")
-    if("county" in fields_split):
-        for address_component in response["result"]["address_components"]:
-            if('administrative_area_level_2' in address_component['types']):
-                place_details["county"] = address_component["long_name"]
-    if("geometry" in fields_split):
-        for component in response["result"]["geometry"]:
-            if('location') in component:
-                place_details["lat"] = response["result"]["geometry"]["location"]["lat"]
-                place_details["lng"] = response["result"]["geometry"]["location"]["lng"]
-    if("reviews" in fields_split):
-        place_details["reviews"] = result.get("reviews")
-
-
-
-
-    if("place_id" in fields_split):
-        place_details["place id"] = place_id
-    
-    
-
-        
-        
-
-
-    #Continue from hereeeee
-    
-    
-    print(place_details)
-
-
-
-    #Return place details including county details
-    return place_details
-
-def write_to_csv_new(file_name, details_list,fields):
+def all(north, south, east, west, box_side_length_km, search, api_key):
     '''
-
-    Takes a list of location details and converts to csv format then writes to location
+    Searches for all of a given search query in a geographic area. 
 
     Arguments:
-
-    file_name -- name to be given to file when created
-    details_list -- the list of places and their details to be turned into the csv
+    north -- north lat of the geographic area
+    south -- south lat of the geographic area
+    east -- east long of the geographic area
+    west -- west long of the geographic area
+    box_side_length_km -- Initial box search size. **Deprecated and probably not nessesary - fix later**
+    search -- search value to use over google maps
+    api_key -- api key to allow use of google maps api
 
     Returns:
 
-    Nothing ***To Change. Either have it return a file or a error code value to indicate success.*** 
+    A list of place ids corresponding to matches within the geographic area.
     
     
     '''
-    with open(file_name, "w", newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=fields,)
-        writer.writeheader()
-        for row in details_list:
-            writer.writerow(row)
 
-key = "AIzaSyChwMaYXlEXc0HpfCKJXUX2wPczmXWAmTw"
-place = "ChIJWzJ3pQRceUgRiWQgaRF5uvg"
-halls = "ChIJRTc3mHymfkgRaaB81GAAGXU"
+    #Create the list to store place ids
+    all_place_ids = []
+    #Call the split bounds function to create smaller boxes
+    boxes = MP.split_bounds(north, south, east, west, box_side_length_km)
+    print(boxes)
 
 
-data = get_place_details_new(halls,key,fields_in)
-all_details = []
-all_details.append(data)
-data = get_place_details_new(place,key,fields_in)
-all_details.append(data)
-
-fieldnames = all_details[0]
-print(fieldnames)
-write_to_csv_new("test.csv",all_details,fieldnames)
-
-fields_split = fields_in.split(",")
-ratings = []
-if("reviews" in fields_split):
-    for location in all_details:
-        for review in location["reviews"]:
-            review_new = {"name":location["name"]}
-            #review["company"] = (location["name"])
-            review_new.update(review)
-            review_new['text'] = review_new['text'].replace("\n"," ")
-            ratings.append(review_new)
-
-write_to_csv_new("review test.csv",ratings,ratings[0])
+    location_list = [(box[-2], box[-1]) for box in boxes]
+    #For each box
+    for box in boxes:
 
 
+        # Calculate the radius in meters
+        radius = box_side_length_km/(2 * math.sin(math.radians(45))) * 1000
 
+        #Get place_ids for one box search
+        one_location_place_ids = MP.get_place_ids_one_location(api_key, box[-2], box[-1], radius, search)
+        print("results 1 box:")
+        print(len(one_location_place_ids))
 
+        #If 60 results come back, ae: the return results was capped out by the google api
+        if len(one_location_place_ids) > 59:
+            # Recursively call the function for smaller boxes
+            recursive_results = all_exact(box[0], box[1], box[2], box[3], (box_side_length_km/2), search, api_key)
 
-print(data)
-print(all_details)
-print("")
-print("")
-print("")
-print("")
-print(ratings)
+            #Add each result from the recursive call to the list
+            for result in recursive_results:
+                all_place_ids.append(result)
+        else:
+            # Append the place IDs of the current box
+            for location in one_location_place_ids:
+                all_place_ids.append(location)
+
+    #Remove duplicate locations
+    all_place_ids = MP.remove_duplicates(all_place_ids)
+
+    #return list of place ids
+    return all_place_ids
+all(54.1,54,-1.9,-2,20,"Food","AIzaSyChwMaYXlEXc0HpfCKJXUX2wPczmXWAmTw")

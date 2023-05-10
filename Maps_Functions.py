@@ -415,7 +415,7 @@ def get_place_details_new(place_id, api_key,fields_in):
 
 def all_exact(north, south, east, west, box_side_length_km, search, api_key):
     '''
-    Searches for all of a given search query in a geographic area. 
+    Searches for all of a given search query in a geographic area. Same as All but designed for when you are going to exactly split a box into smaller chunks with no excess.  
 
     Arguments:
     north -- north lat of the geographic area
@@ -475,7 +475,7 @@ def all_exact(north, south, east, west, box_side_length_km, search, api_key):
 
 def split_bounds_exact(north, south, east, west, box_side_length_km):
     """
-    Split a large georgraphic box into smaller boxes
+    Split a large georgraphic box into smaller boxes. Same as split_bounds except designed for when you know you are going to cut a box into exact parts with no spare.
 
     Arguments:
     north -- the north lat for the geographic box

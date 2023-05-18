@@ -71,7 +71,7 @@ def get_coords():
    print("East:", east)
    print("West:", west)
    
-   box_search = MF.all(north,south,east,west,2,search_query,"AIzaSyChwMaYXlEXc0HpfCKJXUX2wPczmXWAmTw")
+   box_search = MF.all(north,south,east,west,10,search_query,"AIzaSyChwMaYXlEXc0HpfCKJXUX2wPczmXWAmTw")
    print(box_search)
    
    all_details = []

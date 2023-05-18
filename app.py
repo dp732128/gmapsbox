@@ -71,7 +71,7 @@ def get_coords():
    print("East:", east)
    print("West:", west)
    
-   box_search = MF.all(north,south,east,west,20,search_query,"AIzaSyChwMaYXlEXc0HpfCKJXUX2wPczmXWAmTw")
+   box_search = MF.all(north,south,east,west,2,search_query,"AIzaSyChwMaYXlEXc0HpfCKJXUX2wPczmXWAmTw")
    print(box_search)
    
    all_details = []
@@ -112,7 +112,8 @@ def get_coords():
       print("NO RESULTS")
    
    print("Received request with coords:", coords)
-   return send_file("download.csv", as_attachment=True)
+   #return send_file("download.csv", as_attachment=True)
+   return("success")
    #return("hi")
    
    #key = AIzaSyChwMaYXlEXc0HpfCKJXUX2wPczmXWAmTw
